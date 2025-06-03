@@ -4,6 +4,8 @@ using System.Net.Http.Json;
 using WordList.Common.OpenAI.Models;
 using WordList.Common.Json;
 using System.Text;
+using Microsoft.VisualBasic;
+using Amazon.Runtime.Internal.Util;
 
 namespace WordList.Common.OpenAI;
 
@@ -50,6 +52,30 @@ public class OpenAIClient
         return await response.Content.ReadFromJsonAsync(OpenAISerializerContext.Default.FileResponse).ConfigureAwait(false);
     }
 
+    public async Task<FileStatus?> GetFileStatusAsync(string fileId)
+        => await _http.GetFromJsonAsync($"files/{fileId}", OpenAISerializerContext.Default.FileStatus);
+
+    public async Task<CompletedBatch[]> GetCompletedBatchFileContentAsync(string fileId)
+    {
+        var content = await _http.GetStreamAsync($"files/{fileId}/content").ConfigureAwait(false);
+        var reader = new StreamReader(content);
+
+        var results = new List<CompletedBatch>();
+
+        while (!reader.EndOfStream)
+        {
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
+            if (string.IsNullOrEmpty(line)) continue;
+
+            var batch = JsonHelpers.Deserialize(line, OpenAISerializerContext.Default.CompletedBatch);
+            if (batch is null) throw new Exception("Invalid response");
+
+            results.Add(batch);
+        }
+
+        return [.. results];
+    }
+
     public async Task<BatchStatus?> CreateBatchAsync(string uploadedFileId, string endpoint, string completionWindow = "24h")
     {
         var request = new CreateBatchRequest
@@ -68,4 +94,8 @@ public class OpenAIClient
 
         return await response.Content.ReadFromJsonAsync(OpenAISerializerContext.Default.BatchStatus).ConfigureAwait(false);
     }
+
+    public async Task<BatchStatus?> GetBatchStatusAsync(string batchId)
+        => await _http.GetFromJsonAsync("batches", OpenAISerializerContext.Default.BatchStatus).ConfigureAwait(false);
+
 }
