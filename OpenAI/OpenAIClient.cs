@@ -96,6 +96,6 @@ public class OpenAIClient
     }
 
     public async Task<BatchStatus?> GetBatchStatusAsync(string batchId)
-        => await _http.GetFromJsonAsync("batches", OpenAISerializerContext.Default.BatchStatus).ConfigureAwait(false);
+        => await _http.GetFromJsonAsync($"batches/{batchId}", OpenAISerializerContext.Default.BatchStatus).ConfigureAwait(false);
 
 }
