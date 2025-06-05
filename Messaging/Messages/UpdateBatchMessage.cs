@@ -1,4 +1,4 @@
-namespace WordList.Common.Messages;
+namespace WordList.Common.Messaging.Messages;
 
 public class UpdateBatchMessage
 {
