@@ -3,8 +3,10 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Amazon.Lambda.SQSEvents;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using WordList.Common.Json;
 using WordList.Common.Logging;
 using WordList.Common.Messaging.Messages;
 
@@ -53,6 +55,24 @@ public class MessageQueue<T>
 
     public BatchedMessageSender<T> GetBatchSender<U>(ILogger logger)
         => new(s_sqs, TargetUrl, JsonTypeInfo, logger);
+
+    public T[] Receive(SQSEvent input, ILogger log)
+    {
+        return input.Records.Select(record =>
+            {
+                try
+                {
+                    return JsonHelpers.Deserialize(record.Body, JsonTypeInfo);
+                }
+                catch (Exception ex)
+                {
+                    log.Warning($"Ignoring invalid message: {record.Body} ({ex.Message})");
+                    return default;
+                }
+            })
+            .OfType<T>()
+            .ToArray();
+    }
 }
 
 [JsonSerializable(typeof(UpdateBatchMessage))]
