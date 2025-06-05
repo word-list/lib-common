@@ -21,7 +21,7 @@ public class MessageQueue<T>
         JsonTypeInfo = jsonTypeInfo;
     }
 
-    public BatchedMessageSender<T> GetBatchSender<U>(ILogger logger)
+    public BatchedMessageSender<T> GetBatchSender(ILogger logger)
         => new(s_sqs, TargetUrl, JsonTypeInfo, logger);
 
     public T[] Receive(SQSEvent input, ILogger log)
