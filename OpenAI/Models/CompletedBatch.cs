@@ -75,7 +75,7 @@ public class CompletedBatchResponseBodyOutput
     public required string Status { get; set; }
 
     [JsonPropertyName("content")]
-    public required List<CompletedBatchResponseBodyOutputContent> Content { get; set; } = [];
+    public required CompletedBatchResponseBodyOutputContent[] Content { get; set; } = [];
 
     [JsonPropertyName("role")]
     public required string Role { get; set; }
