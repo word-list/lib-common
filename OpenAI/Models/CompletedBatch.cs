@@ -54,7 +54,7 @@ public class CompletedBatchResponseBody
     public required string Model { get; set; }
 
     [JsonPropertyName("output")]
-    public required CompletedBatchResponseBodyOutput Output { get; set; }
+    public required CompletedBatchResponseBodyOutput[] Output { get; set; }
 
     [JsonPropertyName("service_tier")]
     public required string ServiceTier { get; set; }
