@@ -102,11 +102,11 @@ public class BatchedMessageSender<T> : IDisposable
 
     public async Task SendAllMessagesAsync()
     {
-        var tasks = _messages.Chunk(10).Select(SendMessageBatchAsync);
+        var tasks = _messages.Chunk(10).Select(SendMessageBatchAsync).ToList();
 
-        _log.Info($"Waiting for {tasks.Count()} message batches to send");
+        _log.Info($"Waiting for {tasks.Count} message batches to send");
         await Task.WhenAll(tasks).ConfigureAwait(false);
-        _log.Info($"Finished waiting for {tasks.Count()} message batches to send");
+        _log.Info($"Finished waiting for {tasks.Count} message batches to send");
 
         _messages.Clear();
     }
