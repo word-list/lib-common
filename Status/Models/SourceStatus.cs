@@ -12,6 +12,8 @@ public record SourceStatus
     /// </summary>
     public int Priority { get; }
 
+    public bool IsComplete => this == COMPLETE || this == FAILED;
+
     private SourceStatus(string text, int priority)
     {
         Text = text;
@@ -21,11 +23,13 @@ public record SourceStatus
     public static SourceStatus FromText(string text)
         => ALL.FirstOrDefault(s => s.Text.Equals(text, StringComparison.OrdinalIgnoreCase), UNKNOWN);
 
-    public static SourceStatus[] ALL = [UNKNOWN!, CHUNKING!, QUERYING!, UPDATING!, COMPLETE!];
+    public static SourceStatus[] ALL { get; } = [UNKNOWN!, CHUNKING!, QUERYING!, UPDATING!, COMPLETE!];
 
     public static SourceStatus UNKNOWN { get; } = new("Unknown", 0);
     public static SourceStatus CHUNKING { get; } = new("Chunking", 1);
     public static SourceStatus QUERYING { get; } = new("Querying", 2);
     public static SourceStatus UPDATING { get; } = new("Updating", 3);
     public static SourceStatus COMPLETE { get; } = new("Complete", 4);
+
+    public static SourceStatus FAILED { get; } = new("Failed", 5);
 }
