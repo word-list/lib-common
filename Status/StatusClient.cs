@@ -16,12 +16,10 @@ public class StatusClient
     private StatusClient()
     {
         TableName = Environment.GetEnvironmentVariable("SOURCE_UPDATE_STATUS_TABLE_NAME")
-                        ?? throw new InvalidOperationException("DYNAMODB_TABLE_NAME environment variable is not set.");
+            ?? throw new InvalidOperationException("DYNAMODB_TABLE_NAME environment variable is not set.");
 
         if (string.IsNullOrWhiteSpace(TableName))
-        {
             throw new InvalidOperationException("SOURCE_UPDATE_STATUS_TABLE_NAME environment variable is not set or is empty.");
-        }
 
         SaveConfig = new()
         {
@@ -56,11 +54,8 @@ public class StatusClient
 
     public async Task UpdateStatusTotalsAsync(string statusId, int totalWords, int totalChunks)
     {
-        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(statusId, LoadConfig).ConfigureAwait(false);
-        if (statusUpdate == null)
-        {
-            throw new InvalidOperationException($"Status with ID {statusId} not found.");
-        }
+        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(statusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {statusId} not found.");
 
         statusUpdate.TotalWords = totalWords;
         statusUpdate.TotalChunks = totalChunks;
@@ -70,11 +65,8 @@ public class StatusClient
 
     public async Task UpdateStatusAsync(string statusId, SourceStatus status)
     {
-        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(statusId).ConfigureAwait(false);
-        if (statusUpdate == null)
-        {
-            throw new InvalidOperationException($"Status for source ID {statusId} not found.");
-        }
+        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(statusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {statusId} not found.");
 
         // Only update the status if the new status has a higher priority.
         if (SourceStatus.FromText(statusUpdate.Status).Priority < status.Priority)
@@ -87,11 +79,8 @@ public class StatusClient
 
     public async Task IncreaseProcessedWordsAsync(string statusId, int processedWords)
     {
-        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(statusId).ConfigureAwait(false);
-        if (statusUpdate == null)
-        {
-            throw new InvalidOperationException($"Status for source ID {statusId} not found.");
-        }
+        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(statusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {statusId} not found.");
 
         statusUpdate.ProcessedWords += processedWords;
         statusUpdate.LastUpdated = DateTime.UtcNow;
@@ -100,11 +89,8 @@ public class StatusClient
 
     public async Task IncreaseProcessedChunksAsync(string statusId, int processedChunks)
     {
-        var statusUpdate = await s_dynamoDb.LoadAsync<Models.SourceUpdateStatus>(statusId, LoadConfig).ConfigureAwait(false);
-        if (statusUpdate == null)
-        {
-            throw new InvalidOperationException($"Status for source ID {statusId} not found.");
-        }
+        var statusUpdate = await s_dynamoDb.LoadAsync<Models.SourceUpdateStatus>(statusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {statusId} not found.");
 
         statusUpdate.ProcessedChunks += processedChunks;
         statusUpdate.LastUpdated = DateTime.UtcNow;
