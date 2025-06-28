@@ -3,7 +3,7 @@ using WordList.Common.Status.Models;
 
 namespace WordList.Common.Status;
 
-public class StatusUpdater
+public class StatusClient
 {
     private static readonly DynamoDBContext s_dynamoDb = new DynamoDBContextBuilder().Build();
 
@@ -13,7 +13,7 @@ public class StatusUpdater
 
     private LoadConfig LoadConfig { get; init; }
 
-    private StatusUpdater()
+    private StatusClient()
     {
         TableName = Environment.GetEnvironmentVariable("SOURCE_UPDATE_STATUS_TABLE_NAME")
                         ?? throw new InvalidOperationException("DYNAMODB_TABLE_NAME environment variable is not set.");
