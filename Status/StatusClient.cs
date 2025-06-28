@@ -109,4 +109,14 @@ public class StatusClient
         statusUpdate.LastUpdated = DateTime.UtcNow;
         await s_dynamoDb.SaveAsync(statusUpdate, SaveConfig).ConfigureAwait(false);
     }
+
+    public async Task IncreaseTotalWordsAsync(int totalWordsDelta)
+    {
+        var statusUpdate = await s_dynamoDb.LoadAsync<Models.SourceUpdateStatus>(StatusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {StatusId} not found.");
+
+        statusUpdate.TotalWords += totalWordsDelta;
+        statusUpdate.LastUpdated = DateTime.UtcNow;
+        await s_dynamoDb.SaveAsync(statusUpdate, SaveConfig).ConfigureAwait(false);
+    }
 }
