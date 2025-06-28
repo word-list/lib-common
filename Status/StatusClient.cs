@@ -13,7 +13,7 @@ public class StatusClient
 
     private LoadConfig LoadConfig { get; init; }
 
-    private StatusClient()
+    public StatusClient()
     {
         TableName = Environment.GetEnvironmentVariable("SOURCE_UPDATE_STATUS_TABLE_NAME")
             ?? throw new InvalidOperationException("DYNAMODB_TABLE_NAME environment variable is not set.");
