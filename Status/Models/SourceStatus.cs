@@ -27,12 +27,9 @@ public record SourceStatus
 
     public static SourceStatus UNKNOWN { get; } = new("Unknown", 0);
     public static SourceStatus CHUNKING { get; } = new("Chunking", 10);
-
     public static SourceStatus PROCESSING { get; } = new("Processing", 20);
-
     public static SourceStatus QUERYING { get; } = new("Querying", 30);
     public static SourceStatus UPDATING { get; } = new("Updating", 40);
     public static SourceStatus COMPLETE { get; } = new("Complete", 50);
-
     public static SourceStatus FAILED { get; } = new("Failed", 100);
 }

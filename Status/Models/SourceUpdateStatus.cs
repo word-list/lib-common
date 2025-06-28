@@ -31,6 +31,12 @@ public class SourceUpdateStatus
     [DynamoDBProperty("started")]
     public DateTime Started { get; set; }
 
+    [DynamoDBProperty("totalBatches")]
+    public int TotalBatches { get; set; }
+
+    [DynamoDBProperty("processedBatches")]
+    public int ProcessedBatches { get; set; }
+
     [DynamoDBProperty("lastUpdated")]
     public DateTime LastUpdated { get; set; }
 }

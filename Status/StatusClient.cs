@@ -56,7 +56,7 @@ public class StatusClient
         return status.Id;
     }
 
-    public async Task UpdateTotalsWordsAsync(int totalWords)
+    public async Task UpdateTotalWordsAsync(int totalWords)
     {
         var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(StatusId, LoadConfig).ConfigureAwait(false)
             ?? throw new InvalidOperationException($"Status with ID {StatusId} not found.");
@@ -72,6 +72,36 @@ public class StatusClient
             ?? throw new InvalidOperationException($"Status with ID {StatusId} not found.");
 
         statusUpdate.TotalChunks = totalChunks;
+        statusUpdate.LastUpdated = DateTime.UtcNow;
+        await s_dynamoDb.SaveAsync(statusUpdate, SaveConfig).ConfigureAwait(false);
+    }
+
+    public async Task UpdateTotalBatchesAsync(int totalBatches)
+    {
+        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(StatusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {StatusId} not found.");
+
+        statusUpdate.TotalBatches = totalBatches;
+        statusUpdate.LastUpdated = DateTime.UtcNow;
+        await s_dynamoDb.SaveAsync(statusUpdate, SaveConfig).ConfigureAwait(false);
+    }
+
+    public async Task IncreaseTotalBatchesAsync(int totalBatches)
+    {
+        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(StatusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {StatusId} not found.");
+
+        statusUpdate.TotalBatches += totalBatches;
+        statusUpdate.LastUpdated = DateTime.UtcNow;
+        await s_dynamoDb.SaveAsync(statusUpdate, SaveConfig).ConfigureAwait(false);
+    }
+
+    public async Task IncreaseProcessedBatchesAsync(int processedBatches)
+    {
+        var statusUpdate = await s_dynamoDb.LoadAsync<SourceUpdateStatus>(StatusId, LoadConfig).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Status with ID {StatusId} not found.");
+
+        statusUpdate.ProcessedBatches += processedBatches;
         statusUpdate.LastUpdated = DateTime.UtcNow;
         await s_dynamoDb.SaveAsync(statusUpdate, SaveConfig).ConfigureAwait(false);
     }
