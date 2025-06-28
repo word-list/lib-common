@@ -36,5 +36,6 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.1" />
     <PackageReference Include="AWSSDK.S3" Version="4.0.0.5" />
     <PackageReference Include="AWSSDK.SQS" Version="4.0.0.4" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
   </ItemGroup>
 </Project>
