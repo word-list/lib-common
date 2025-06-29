@@ -126,6 +126,11 @@ public class StatusClient
             ?? throw new InvalidOperationException($"Status with ID {StatusId} not found.");
 
         statusUpdate.ProcessedWords += processedWords;
+        if (statusUpdate.ProcessedWords >= statusUpdate.TotalWords)
+        {
+            statusUpdate.ProcessedWords = statusUpdate.TotalWords;
+            statusUpdate.Status = SourceStatus.COMPLETE.Text;
+        }
         statusUpdate.LastUpdated = DateTime.UtcNow;
         await s_dynamoDb.SaveAsync(statusUpdate, SaveConfig).ConfigureAwait(false);
     }
